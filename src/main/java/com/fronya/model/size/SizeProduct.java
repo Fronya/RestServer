@@ -5,6 +5,9 @@ public class SizeProduct extends Size {
     private double price;
     private boolean isExist;
 
+    public SizeProduct() {
+    }
+
     public SizeProduct(int id, String value, double price, boolean isExist) {
         super(id, value);
         this.price = price;

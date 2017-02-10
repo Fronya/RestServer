@@ -6,8 +6,9 @@ import com.fronya.model.customer.RegisterCustomer;
 
 public interface CustomerDao {
     int create(RegisterCustomer newCustomer);
-    //boolean update(Customer updateCustomer);
+    boolean update(Customer updateCustomer);
    // boolean delete(int idCustomer);
     Customer get(String email, String password);
+    Customer get(int id, boolean isGetPassword);
     int getId(String email, String password);
 }

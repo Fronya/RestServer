@@ -18,14 +18,14 @@ public class SizeService {
     private SizeDao sizeDao = FactoryDao.getFactoryDao(FactoryDao.MYSQL).getSizeDao();
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSizes(){
         List<Size> sizes = sizeDao.getAll();
         if(sizes.isEmpty()){
             log.debug("array of sizes is empty");
             return Response.status(Response.Status.BAD_REQUEST).entity("false").build();
         }else {
-            String output = new Gson().toJson(sizes);
-            return Response.status(Response.Status.OK).entity(output).build();
+            return Response.status(Response.Status.OK).entity(sizes).build();
         }
     }
 
@@ -66,7 +66,7 @@ public class SizeService {
     @AdminSecure
     @DELETE
     @Path("{id}")
-    public Response updateSize(@PathParam("id") int id){
+    public Response deleteSize(@PathParam("id") int id){
         if(sizeDao.delete(id)){
             return Response.status(Response.Status.OK).entity("true").build();
         }else{

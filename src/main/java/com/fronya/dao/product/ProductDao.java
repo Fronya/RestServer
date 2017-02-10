@@ -7,7 +7,7 @@ import com.fronya.model.product.ProductShort;
 import java.util.List;
 
 public interface ProductDao {
-    boolean create(ProductFull newProduct);
+    int create(ProductFull newProduct);
     boolean update(ProductFull updateProduct);
     boolean delete(int idProduct);
     ProductFull get(int id);

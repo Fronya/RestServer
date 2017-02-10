@@ -11,8 +11,6 @@ import com.fronya.model.order.OrderAdmin;
 import com.fronya.model.order.OrderList;
 import org.apache.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -21,6 +19,24 @@ import java.util.List;
 public class CustomerService {
     private Logger log = Logger.getLogger(CustomerService.class);
     private CustomerDao customerDao = FactoryDao.getFactoryDao(FactoryDao.MYSQL).getCustomerDao();
+
+    @GET
+    @AdminSecure
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response get(@PathParam("id") int id){
+        return getCustomer(id);
+    }
+
+    private Response getCustomer(int id){
+        Customer findCustomer = customerDao.get(id, false);
+        log.debug("find customer: " + findCustomer);
+        if(findCustomer == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }else{
+            return Response.status(Response.Status.OK).entity(findCustomer).build();
+        }
+    }
 
     @POST
     @Path("/login")

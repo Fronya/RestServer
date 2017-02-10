@@ -7,9 +7,11 @@ import com.fronya.dao.mysql.customer.MysqlCustomerDao;
 import com.fronya.dao.mysql.order.MysqlOrderDao;
 import com.fronya.dao.mysql.product.MysqlProductDao;
 import com.fronya.dao.mysql.size.MysqlSizeDao;
+import com.fronya.dao.mysql.size.MysqlSizeProductDao;
 import com.fronya.dao.order.OrderDao;
 import com.fronya.dao.product.ProductDao;
 import com.fronya.dao.size.SizeDao;
+import com.fronya.dao.size.SizeProductDao;
 
 public class MysqlFactoryDao extends FactoryDao {
     @Override
@@ -28,5 +30,10 @@ public class MysqlFactoryDao extends FactoryDao {
     @Override
     public OrderDao getOrderDao() {
         return new MysqlOrderDao();
+    }
+
+    @Override
+    public SizeProductDao getSizeProductDao() {
+        return new MysqlSizeProductDao();
     }
 }

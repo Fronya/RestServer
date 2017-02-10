@@ -1,7 +1,7 @@
 package com.fronya.model.customer;
 
 
-public class RegisterCustomer {
+public class RegisterCustomer  {
     private String name;
     private String lastName;
     private String city;

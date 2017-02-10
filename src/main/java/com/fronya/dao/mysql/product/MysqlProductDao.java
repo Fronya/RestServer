@@ -57,8 +57,8 @@ public class MysqlProductDao implements ProductDao {
 
 
     @Override
-    public boolean create(ProductFull newProduct) {
-        boolean isCreate = false;
+    public int create(ProductFull newProduct) {
+        int newId = -1;
 
         Connection con = ConnectionPool.getConnection();
         try(PreparedStatement stmt = con.prepareStatement(queryCreate)){
@@ -67,14 +67,15 @@ public class MysqlProductDao implements ProductDao {
             stmt.setString(3, newProduct.getPathImage());
             stmt.setString(4, newProduct.getName());
 
-            if(stmt.executeUpdate() > 0){
-                isCreate = true;
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    newId = rs.getInt(1);
+                }
             }
-
         }catch (SQLException ex){
             log.debug(ex.getMessage());
         }
-        return isCreate;
+        return newId;
     }
 
     @Override

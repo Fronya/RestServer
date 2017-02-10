@@ -39,7 +39,7 @@ public class CustomerFilter implements ContainerRequestFilter{
         }catch(AuthenticationException ex){
             containerRequestContext.abortWith(Response
                     .status(Response.Status.UNAUTHORIZED)
-                    .entity("User isn't admin")
+                    .entity("User isn't auth customer")
                     .build());
         }
     }

@@ -31,16 +31,22 @@ public class MysqlCustomerDao implements CustomerDao{
     private static final String KEY_REGISTER = "customer.register";
     private static final String KEY_LOGIN = "customer.login";
     private static final String KEY_GET_ID = "customer.get_id";
+    private static final String KEY_GET = "customer.get";
+    private static final String KEY_UPDATE = "customer.update";
 
     private static String queryRegister;
     private static String queryLogin;
     private static String queryGetId;
+    private static String queryGet;
+    private static String queryUpdate;
 
     static{
         ResourceBundle resource = ResourceBundle.getBundle(PATH_FILE);
         queryRegister = resource.getString(KEY_REGISTER);
         queryLogin = resource.getString(KEY_LOGIN);
         queryGetId = resource.getString(KEY_GET_ID);
+        queryGet = resource.getString(KEY_GET);
+        queryUpdate = resource.getString(KEY_UPDATE);
     }
 
     /**
@@ -74,6 +80,30 @@ public class MysqlCustomerDao implements CustomerDao{
         return newId;
     }
 
+    @Override
+    public boolean update(Customer updateCustomer) {
+        boolean isUpdate = false;
+
+        Connection con = ConnectionPool.getConnection();
+        try(PreparedStatement stmt = con.prepareStatement(queryUpdate)) {
+            stmt.setString(1, updateCustomer.getName());
+            stmt.setString(2, updateCustomer.getLastName());
+            stmt.setString(3, updateCustomer.getCity());
+            stmt.setString(4, updateCustomer.getAddress());
+            stmt.setString(5, updateCustomer.getPhone());
+            stmt.setString(6, updateCustomer.getEmail());
+            stmt.setString(7, updateCustomer.getPassword());
+            stmt.setInt(8, updateCustomer.getId());
+
+            if(stmt.executeUpdate() > 0){
+                isUpdate = true;
+            }
+        }catch (SQLException ex){
+            log.debug(ex.getMessage());
+        }
+        return isUpdate;
+    }
+
     /**
      * Login user
      * @param emailUser user's email
@@ -101,13 +131,53 @@ public class MysqlCustomerDao implements CustomerDao{
                     int idRole = rs.getInt(COLUMN_ROLE);
                     Role role = Role.values()[idRole];
 
-                    loginUser = new Customer(id, name, lastName, city, address, phone, email, role);
+                    loginUser = new Customer(name, lastName, city, address, phone, email, null, id, role);
                 }
             }
         }catch(SQLException ex){
             log.debug(ex.getMessage());
         }
         return loginUser;
+    }
+
+    /**
+     * Get user info by id
+     * @param id
+     * @return
+     */
+    @Override
+    public Customer get(int id, boolean isGetPassword) {
+        Customer findCustomer = null;
+
+        Connection con = ConnectionPool.getConnection();
+        try(PreparedStatement stmt = con.prepareStatement(queryGet)) {
+            stmt.setInt(1, id);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    log.debug("result set not empty");
+
+                    String name = rs.getString(COLUMN_NAME);
+                    String lastName = rs.getString(COLUMN_LAST_NAME);
+                    String city = rs.getString(COLUMN_CITY);
+                    String address = rs.getString(COLUMN_ADDRESS);
+                    String phone = rs.getString(COLUMN_PHONE);
+                    String email = rs.getString(COLUMN_EMAIL);
+                    int idRole = rs.getInt(COLUMN_ROLE);
+                    Role role = Role.values()[idRole];
+                    String password = null;
+                    if(isGetPassword){
+                        password = rs.getString(COLUMN_PASSWORD);
+                    }
+
+                    findCustomer = new Customer(name, lastName, city, address, phone, email, password, id, role);
+                }
+            }
+        }catch (SQLException ex){
+            log.debug(ex.getMessage());
+        }
+        log.debug("find customer = " + findCustomer);
+        return findCustomer;
     }
 
     /**
